@@ -33,7 +33,7 @@ class Particle:
 
     def create_particles(self, n_particles, p_color):
         """
-        Erzeugt ein Numpy-Array der Länge "anzahl" (Zahl der zu simulierenden Teilchen der betreffenden Farbe) mit 7
+        Erzeugt ein Numpy-Array der Länge "n_particles" (Zahl der zu simulierenden Teilchen der betreffenden Farbe) mit 7
         Feldern in der 2. Dimension. Die ersten 3 enthalten den Farbwert (RGB), Nr. 4 u. 5 die Position (x, y) und
         6 u. 7 die Geschwindigkeit. Die Positionen werden mit Zufallszahlen zwischen 1 und der Breite bzw Höhe des
         Displays initialisiert, die Anfangsgeschwindigkeiten auf 0 gesetzt.
@@ -211,36 +211,25 @@ class Particle:
             self.draw_particles(self.red_particles)
             pygame.display.update()
 
+            particles = [self.yellow_particles, self.blue_particles, self.green_particles, self.red_particles]
+
+            #              yellow  blue   green  red
+            interactions = [[0.1, -0.01, -0.03, 0.01],  # yellow
+                            [0.2, -0.02, -0.02, 0.01],  # blue
+                            [0.1, -0.02, 0.05, -0.01],  # green
+                            [0.09, -0.1, 0.1, 0.05]]    # red
+
             # Berechnung der neuen Teilchenpositionen anhand der hier angegebenen Kraftkonstanten
-            self.yellow_particles = self.attraction_rule(self.yellow_particles, self.yellow_particles, 0.1)
-            self.yellow_particles = self.attraction_rule(self.yellow_particles, self.blue_particles, -0.01)
-            self.yellow_particles = self.attraction_rule(self.yellow_particles, self.green_particles, -0.03)
-            self.yellow_particles = self.attraction_rule(self.yellow_particles, self.red_particles, 0.01)
-
-            self.blue_particles = self.attraction_rule(self.blue_particles, self.yellow_particles, 0.2)
-            self.blue_particles = self.attraction_rule(self.blue_particles, self.blue_particles, -0.02)
-            self.blue_particles = self.attraction_rule(self.blue_particles, self.green_particles, -0.02)
-            self.blue_particles = self.attraction_rule(self.blue_particles, self.red_particles, 0.01)
-
-            self.green_particles = self.attraction_rule(self.green_particles, self.yellow_particles, 0.1)
-            self.green_particles = self.attraction_rule(self.green_particles, self.blue_particles, -0.02)
-            self.green_particles = self.attraction_rule(self.green_particles, self.green_particles, 0.05)
-            self.green_particles = self.attraction_rule(self.green_particles, self.red_particles, -0.01)
-
-            self.red_particles = self.attraction_rule(self.red_particles, self.yellow_particles, 0.09)
-            self.red_particles = self.attraction_rule(self.red_particles, self.blue_particles, -0.1)
-            self.red_particles = self.attraction_rule(self.red_particles, self.green_particles, 0.1)
-            self.red_particles = self.attraction_rule(self.red_particles, self.red_particles, 0.05)
+            for n1, particles_1 in enumerate(particles):
+                for n2, particles_2 in enumerate(particles):
+                    particles_1 = self.attraction_rule(particles_1, particles_2, interactions[n1][n2])
 
             self.clock.tick(120)
         pygame.quit()
 
 
-# the main function
-
-
 def main():
-    particle_life = Particle(True, 1920, 1070, (0, 0, 0), 200)
+    particle_life = Particle(True, 1400, 1000, (0, 0, 0), 200)
 
 
 if __name__ == "__main__":
