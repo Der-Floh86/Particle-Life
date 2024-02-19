@@ -81,23 +81,24 @@ class Particle:
         abgelegten Komponenten durch d_abs normiert die Vektoren auf den Betrag von 1.
 
         3. Berechnung der Kräfte zwischen den Teilchen
-        Der Parameter g entspricht einer Kraftkonstanten zwischen den Teilchen. Im Falle einer repulsiven Wechselwirkung
-        (g < 0) ist die Kraft umgekehrt proportional zum Teilchenabstand d_abs und wird einfach durch Bildung des
-        Quotienten g/d_abs berechnet. Im Falle einer anziehenden Wechselwirkung wird ein Gleichgewichtsabstand r_eq
-        angenommen.
+        Der Parameter g entspricht einer Beschleunigungskonstanten zwischen den Teilchen. (Da die Teilchen masselos
+        sind, macht eine Unterscheidung zwischen Kraft und Beschleunigung hier keinen Sinn.) Im Falle einer repulsiven
+        Wechselwirkung (g < 0) ist die Kraft umgekehrt proportional zum Teilchenabstand d_abs und wird einfach durch
+        Bildung des Quotienten g/d_abs berechnet. Im Falle einer anziehenden Wechselwirkung wird ein
+        Gleichgewichtsabstand r_eq angenommen.
         Ist d_abs > r_eq, wird wiederum der Quotient gebildet. Unterschreitet der Abstand d_abs jedoch den
         Gleichgewichtsabstand r_eq, wird die Wechselwirkung als Abstoßung modelliert, indem der Quotient mit -1
         multipliziert wird. Das Ergebnis ist eine Matrix names f, die Kräfte zwischen allen Partikeln in Abhängigkeit
         von deren Abstand d_abs als Skalarwert enthält.
 
         4. Berechnung der neuen Geschwindigkeiten
-        Um den Kräften eine Richtung zu verleihen (die Kräfte wirken entlang der Einheitsvektoren) werden deren
-        Komponenten im Array d mit der Kraftmatrix f multipliziert. Die resultierenden Kräfte werden für jedes Teilchen
-        aufsummiert und zu den Geschwindigkeitskomponenten im array particles_1 addiert. Da die Teilchen masselos sind,
-        wird auf die vorherige Berechnung der Beschleunigung verzichtet. Da die Annahmen über die Wechselwirkungen in
-        dieser Simulation unphysikalisch sind (die Kräfte wirken nicht paarweise und nehmen auch nicht mit dem Quadrat
-        des Abstands ab) gelten hier die üblichen Erhaltungssätze nicht, sodass dem System durch Multiplikation der
-        Kraftkomponenten mit 0.5 und der Geschwindigkeiten mit 0.992 künstlich Energie entzogen wird.
+        Um den Kräften bzw. Beschleunigungen eine Richtung zu verleihen (die Kräfte wirken entlang der Einheitsvektoren)
+        werden deren Komponenten im Array d mit der Matrix f multipliziert. Die resultierenden Beschleunigungen werden
+        für jedes Teilchen aufsummiert und zu den Geschwindigkeitskomponenten im array particles_1 addiert.
+        Da die Annahmen über die Wechselwirkungen in dieser Simulation unphysikalisch sind (die Kräfte wirken nicht
+        paarweise und nehmen auch nicht mit dem Quadrat des Abstands ab) gelten hier die üblichen Erhaltungssätze nicht,
+        sodass dem System durch Multiplikation der Kraftkomponenten mit 0.5 und der Geschwindigkeiten mit 0.992
+        künstlich Energie entzogen wird.
 
         der Parameter box:
         Bei Angabe 'repulsive' finden elastische Stöße der Teilchen an den Rändern der Simulationszelle (d. h. des
