@@ -68,7 +68,7 @@ class ParticleSimulation:
             y = ptl[4]
             pygame.draw.circle(self.screen, color, (x, y), 1)
 
-    def attraction_rule(self, particles_1, particles_2, g=1.0, r_eq=40, box='cyclic'):
+    def particle_interaction(self, particles_1, particles_2, g=1.0, r_eq=40, box='cyclic'):
         """
         Berechnet die Kräfte zwischen den Teilchen in den Arrays particles_1 und particles_2, daraus resultierende
         Änderungen in Geschwindigkeit und Position für teilchen1 und liefert das modifizierte Array particles_1 zurück.
@@ -245,7 +245,7 @@ class ParticleSimulation:
             # Berechnung der neuen Teilchenpositionen anhand der hier angegebenen Kraftkonstanten
             for n1, particles_1 in enumerate(particles):
                 for n2, particles_2 in enumerate(particles):
-                    particles_1 = self.attraction_rule(particles_1, particles_2, interactions[n1][n2])
+                    particles_1 = self.particle_interaction(particles_1, particles_2, interactions[n1][n2])
 
             self.clock.tick(60)
         pygame.quit()
