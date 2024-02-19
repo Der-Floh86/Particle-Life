@@ -71,31 +71,33 @@ class Particle:
         Dimension entspricht der jeweiligen Teilchenzahl, die Zweite der Teilchenzahl des jeweils anderen Arrays.
         In dieser Dimension werden die betreffenden Werte gebroadkastet, sodass anschließend durch Differenzbildung
         (x2-x1 bzw. y2-y1) ein 2D-Array mit den Abständen in x- bzw. y-Richtung erhalten wird.
-        Damit bei der Berechnung der Kräfte zwischen Partikeln einer Farbe (particles_1 = particles_2) alle Koordinaten
-        von sich selbst abgezogen werden, was in einer Nullmatrix resultieren würde, wird vor der Differenzbildung
-        jeweils ein array mit swapaxes um 90° gedreht. Das Ergebnis wird in einem Array names d abgelegt.
+        Damit nicht n_particle mal dieselbe Differenz berechnet wird, sondern die Differenz zwischen jedem Partikel
+        aus particle_1 und jedem Partikel aus particle_2, wird zuvor das Array x2 bzw y2 um 90° gedreht. Hierfür wird
+        die Funktion swapaxes verwendet. Das Ergebnis der Differenzbildung wird in einem 3D-Array namens d abgelegt.
+        x-Komponenten: d[:, :, 0]; y-Komponenten: d[:, :, 0]
 
         2. Berechnung der Einheitsvektoren zwischen den Teilchen
-        Die Beträge der Vektoren werden in einem 2D-Array namens d_abs abgelegt. Division der in d abgelegten
-        Komponenten der Abstandsvektonren durch d_abs normiert die Vektoren.
+        Die Beträge der so erzeugten Abstandsvektoren werden in einem 2D-Array namens d_abs abgelegt. Division der in d
+        abgelegten Komponenten durch d_abs normiert die Vektoren auf den Betrag von 1.
 
         3. Berechnung der Kräfte zwischen den Teilchen
         Der Parameter g entspricht einer Kraftkonstanten zwischen den Teilchen. Im Falle einer repulsiven Wechselwirkung
-        (g<0) ist die Kraft umgekehrt proportional zum Teilchenabstand d_abs und wird einfach durch Bildung des
+        (g < 0) ist die Kraft umgekehrt proportional zum Teilchenabstand d_abs und wird einfach durch Bildung des
         Quotienten g/d_abs berechnet. Im Falle einer anziehenden Wechselwirkung wird ein Gleichgewichtsabstand r_eq
         angenommen.
         Ist d_abs > r_eq, wird wiederum der Quotient gebildet. Unterschreitet der Abstand d_abs jedoch den
         Gleichgewichtsabstand r_eq, wird die Wechselwirkung als Abstoßung modelliert, indem der Quotient mit -1
-        multipliziert wird.
+        multipliziert wird. Das Ergebnis ist eine Matrix names f, die Kräfte zwischen allen Partikeln in Abhängigkeit
+        von deren Abstand d_abs als Skalarwert enthält.
 
         4. Berechnung der neuen Geschwindigkeiten
-        Die Komponenten der Einheitsvektoren im Array d werden mit der Kraftmatrix f multipliziert. Die resultierenden
-        Kräfte werden für jedes Teilchen summiert und zu den Geschwindigkeitskomponenten im array particles_1 addiert.
-        Da die Teilchen masselos sind, wird auf die vorherige Berechnung der Beschleunigung verzichtet.
-        Da die Annahmen über die Wechselwirkungen in dieser Simulation unphysikalisch sind (die Kräfte wirken nicht
-        paarweise und nehmen auch nicht mit dem Quadrat des Abstands ab) gelten hier die üblichen Erhaltungssätze nicht,
-        sodass dem System durch Multiplikation der Kraftkomponenten mit 0.5 und der Geschwindigkeiten mit 0.992
-        künstlich Energie entzogen wird.
+        Um den Kräften eine Richtung zu verleihen (die Kräfte wirken entlang der Einheitsvektoren) werden deren
+        Komponenten im Array d mit der Kraftmatrix f multipliziert. Die resultierenden Kräfte werden für jedes Teilchen
+        aufsummiert und zu den Geschwindigkeitskomponenten im array particles_1 addiert. Da die Teilchen masselos sind,
+        wird auf die vorherige Berechnung der Beschleunigung verzichtet. Da die Annahmen über die Wechselwirkungen in
+        dieser Simulation unphysikalisch sind (die Kräfte wirken nicht paarweise und nehmen auch nicht mit dem Quadrat
+        des Abstands ab) gelten hier die üblichen Erhaltungssätze nicht, sodass dem System durch Multiplikation der
+        Kraftkomponenten mit 0.5 und der Geschwindigkeiten mit 0.992 künstlich Energie entzogen wird.
 
         der Parameter box:
         Bei Angabe 'repulsive' finden elastische Stöße der Teilchen an den Rändern der Simulationszelle (d. h. des
@@ -226,6 +228,9 @@ class Particle:
 
             self.clock.tick(120)
         pygame.quit()
+
+
+# the main function
 
 
 def main():
