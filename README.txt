@@ -15,13 +15,13 @@ The ParticleSimulation class takes the following arguments:
 create_particles
 The function create_particles will return a numpy array of the length n_particles (number of particles to create) which
 contains the rgb values of the corresponding color in index positions 0-2.
-Index positions 3 and 4 contain the particle positions while 5 and 6 contain the velocities. Position values are
-initialized as random values, velocities are set to zero.
+Index positions 3 and 4 contain the particle positions in x- and y-direction,respectively while pos 5 and 6 contain the
+x- and y-velocities. Position values are initialized as random values, velocities are set to zero.
 
 draw_particles
 This function will draw the particles on the screen
 
-attraction rules
+particle_interaction
 calculates the interactions between particles and thereof new particle positions employing numpy functionalities to make
 the code more efficient and run smoother.
 
@@ -30,4 +30,3 @@ the main simulation loop
 
 The project was inspired by https://github.com/CapedDemon/Particle-life
 Thanks a lot for the great idea and the valuable inspiration.
-The code was modified making extensive use of numpy functionalities to make it efficient and run more smoothly.
