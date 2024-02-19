@@ -1,8 +1,15 @@
+"""
+A class to simulate vivid particle movements based on custom interaction rules
+The project was inspired by https://github.com/CapedDemon/Particle-life
+Thanks a lot for the great idea and the valuable inspiration.
+The code was modified making extensive use of numpy functionalities to make it more efficient and run smoother.
+"""
+
 import pygame
 import numpy as np
 
 
-class Particle:
+class ParticleSimulation:
     def __init__(self, running, width, height, color, n_particles):
         pygame.init()
         self.width = width
@@ -61,7 +68,7 @@ class Particle:
             y = ptl[4]
             pygame.draw.circle(self.screen, color, (x, y), 1)
 
-    def attraction_rule(self, particles_1, particles_2, g=1.0, r_eq=40, box='repulsive'):
+    def attraction_rule(self, particles_1, particles_2, g=1.0, r_eq=40, box='cyclic'):
         """
         Berechnet die Kräfte zwischen den Teilchen in den Arrays particles_1 und particles_2, daraus resultierende
         Änderungen in Geschwindigkeit und Position für teilchen1 und liefert das modifizierte Array particles_1 zurück.
@@ -97,8 +104,10 @@ class Particle:
         für jedes Teilchen aufsummiert und zu den Geschwindigkeitskomponenten im array particles_1 addiert.
         Da die Annahmen über die Wechselwirkungen in dieser Simulation unphysikalisch sind (die Kräfte wirken nicht
         paarweise und nehmen auch nicht mit dem Quadrat des Abstands ab) gelten hier die üblichen Erhaltungssätze nicht,
-        sodass dem System durch Multiplikation der Kraftkomponenten mit 0.5 und der Geschwindigkeiten mit 0.992
-        künstlich Energie entzogen wird.
+        sodass dem System durch Multiplikation der Kraftkomponenten mit 0.5 und der Geschwindigkeiten mit 0.995
+        künstlich Energie entzogen wird. Dieser Parameter kann bzw. muss in Abhängigkeit von der Teilchendichte,
+        der asymmetrie der Wechselwirkungen in der Liste "interactions" und nach gewünschter Lebhaftigkeit der
+        Simulation variiert werden.
 
         der Parameter box:
         Bei Angabe 'repulsive' finden elastische Stöße der Teilchen an den Rändern der Simulationszelle (d. h. des
@@ -113,6 +122,11 @@ class Particle:
         :param box: 'cyclic': Zyklische Simulationsbox, 'repulsive': Elastische Stöße an den Wänden
         :return: particles_1 (np-Array mit modifizierten Geschwindigkeits- und Positionsangaben)
         """
+        if box not in ['repulsive', 'cyclic']:
+            print(f'Kein Gültiger Wert für den Parameter "box" übergeben: {box}'
+                  'Der Wert wird auf "cyclic" gesetzt')
+            box = 'cyclic'
+
         # leere Arrays
         # zur Aufnahme der Abstände in x-Richtung([0] und y-Richtung([1])
         d = np.zeros((particles_1.shape[0], particles_2.shape[0], 2))
@@ -170,8 +184,8 @@ class Particle:
         # Da die hier gemachten Annahmen unphysikalisch sind, gelten die Erhaltungssätze nicht.
         particles_1[:, 5] += fx * 0.5
         particles_1[:, 6] += fy * 0.5
-        particles_1[:, 5] *= 0.992
-        particles_1[:, 6] *= 0.992
+        particles_1[:, 5] *= 0.995
+        particles_1[:, 6] *= 0.995
 
         particles_1[:, 3] += particles_1[:, 5]
         particles_1[:, 4] += particles_1[:, 6]
@@ -216,6 +230,12 @@ class Particle:
 
             particles = [self.yellow_particles, self.blue_particles, self.green_particles, self.red_particles]
 
+            # Angabe der Wechselwirkungen zwischen den Teilchensorten particle_2 -> particle_1
+            # Z. B. Zeile 1: Alle WW, die die gelben Teilchen bei Interaktion mit sich selbst und den jeweils anderen
+            # Teilchensorten erfahren. Ein Wert > 0 bedeutet Anziehung, ein Wert < 0 Abstoßung.
+            # Die Werte können beliebig variiert werden.
+            # Wichtig: Die Matrix ist nicht symmetrisch. Das ist zwar unphysikalisch, hier aber beabsichtigt.
+
             # particles_2: yellow  blue   green  red   particles_1:
             interactions = [[0.1, -0.01, -0.03, 0.01],  # yellow
                             [0.2, -0.02, -0.02, 0.01],  # blue
@@ -227,15 +247,12 @@ class Particle:
                 for n2, particles_2 in enumerate(particles):
                     particles_1 = self.attraction_rule(particles_1, particles_2, interactions[n1][n2])
 
-            self.clock.tick(120)
+            self.clock.tick(60)
         pygame.quit()
 
 
-# the main function
-
-
 def main():
-    particle_life = Particle(True, 1400, 1000, (0, 0, 0), 200)
+    particle_life = ParticleSimulation(True, 1400, 1000, (0, 0, 0), 200)
 
 
 if __name__ == "__main__":
