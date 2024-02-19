@@ -24,3 +24,7 @@ calculates the interactions between particles and thereof new particle positions
 
 game_loop
 the main simulation loop
+
+The project was inspired by https://github.com/CapedDemon/Particle-life
+Thanks a lot for the great idea and the valualble inspiration.
+The code was modified making extensive use of numpy functionalities to make it efficient and run more smoothly.
