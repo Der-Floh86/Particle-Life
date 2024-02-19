@@ -216,7 +216,7 @@ class Particle:
 
             particles = [self.yellow_particles, self.blue_particles, self.green_particles, self.red_particles]
 
-            #              yellow  blue   green  red
+            # particles_2: yellow  blue   green  red   particles_1:
             interactions = [[0.1, -0.01, -0.03, 0.01],  # yellow
                             [0.2, -0.02, -0.02, 0.01],  # blue
                             [0.1, -0.02, 0.05, -0.01],  # green
